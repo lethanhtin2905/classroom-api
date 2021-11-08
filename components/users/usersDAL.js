@@ -8,6 +8,8 @@ const usersSchema = new mongoose.Schema({
     name: String,
     email: String,
     role: String,
+    googleID: String,
+    facebookID: String,
 }, { collection: "users" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 mongoose.model("Users", usersSchema);

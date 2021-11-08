@@ -7,6 +7,9 @@ module.exports = {
     getUserByUsername(username){
         return User.findOne({username: username}).exec();
     },
+    getUserFacebookID(facebookID){
+        return User.findOne({facebookID: facebookID}).exec();
+    },
     getUser(query){
         return User.findOne(query).exec();
     },
@@ -35,12 +38,16 @@ module.exports = {
             })
         })
     },
-    // updateUser(userID, info){
-    //     info = info || {};
-    //     return User.findOneAndUpdate({userID: userID }, {
-    //         name: info.name || "",
-    //         email: info.email || "",
-    //         userID: info.userID || "",
-    //     }).exec();
-    // }
+    addFacebookUser(info) {
+        const newUser = new User({
+            email: info.email,
+            name: info.name,
+            facebookID: info.facebookID,
+        });
+        try {
+            return newUser.save();
+        } catch (err) {
+            console.log('error at signUp' + err);
+        }
+    },
 };

@@ -85,9 +85,46 @@ const signUp = async(req, res, next) => {
     }
 };
 
+/* GET Log in With Facebook */
+const redirectFacebookID = (req, res, next) => {
+    res.redirect(constant.clientDomain + constant.redirectPath + "/facebook/" + req.user.facebookID);
+}
+
+const logInWithFacebook = async(req, res, next) => {
+    if (req.body.facebookID) {
+        const user = await User.getUser({
+            facebookID: req.body.facebookID
+        });
+        if (user){
+            var payload = { facebookID: user.facebookID };
+            var token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+            res.json({
+                isSuccess: true,
+                user: {
+                    name: user.name,
+                    email: user.email,
+                    token: token
+                }
+            })
+        } else {
+            res.json({
+                isSuccess: false,
+                message: constant.logInInvalid
+            })
+        }
+    } else {
+        res.json({
+            isSuccess: false,
+            message: constant.logInInvalid
+        })
+    }
+};
+
 
 module.exports = {
     logIn,
     signUp,
+    redirectFacebookID,
+    logInWithFacebook
     // updateProfile
 };
