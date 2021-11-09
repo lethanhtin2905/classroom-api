@@ -19,7 +19,7 @@ module.exports = {
     tokenCheckIn,
     // Messages
     logInInvalid,
-    usernameExisted,
+    emailExisted,
     signUpSuccess,
     signUpFail,
 }

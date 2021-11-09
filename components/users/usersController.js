@@ -1,4 +1,6 @@
 const User = require('./userService');
+const mongoose = require('mongoose');
+const UserModel = mongoose.model('Users');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const constant = require('../../Utils/constant');
@@ -13,14 +15,13 @@ const logIn = async (req, res, next) => {
         if (user) {
             bcrypt.compare(password, user.password, (err, result) => {
                 if (result === true) {
-                    const payload = { username: user.username };
+                    const payload = { _id: user._id };
                     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
                     res.json({
                         isSuccess: true,
                         user: {
                             username: user.username,
                             userID: user.userID,
-                            username: user.username,
                             name: user.name,
                             email: user.email,
                             token: token
@@ -102,13 +103,35 @@ const logInWithGoogle = async (req, res, next) => {
         .then(response => {
             const {email_verified, name, email} = response.payload;
             if (email_verified) {
-                User.findOne({email: email}).exec((err, user) => {
+                UserModel.findOne({email: email}).exec((err, user) => {
                     if(err) {
                         return res.status(400).json({error: err.message});
                     } else if (user) {
-
+                        const payload = { _id: user._id };
+                        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                        res.json({
+                            isSuccess: true,
+                            token: token,
+                            user: {
+                                username: user.username,
+                                userID: user.userID,
+                                name: user.name,
+                                email: user.email,
+                            }
+                        })
                     } else {
-
+                        const password = email + process.env.JWT_SECRET_KEY;
+                        const newUser = new UserModel({
+                            userID: '',
+                            email: email,
+                            name: name,
+                            password: password,
+                        });
+                        try {
+                            return newUser.save();
+                        } catch (err) {
+                            console.log('error at signUp' + err);
+                        }
                     }
                 });
             }
