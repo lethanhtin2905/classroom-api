@@ -7,7 +7,7 @@ const tokenCheckIn = '&token=';
 
 // Messages
 const logInInvalid = "Username or Password invalid!!!";
-const usernameExisted = "Username has already existed";
+const emailExisted = "Email has already existed";
 const signUpSuccess = "Register successfully !!!";
 const signUpFail = "Register fail !!!";
 

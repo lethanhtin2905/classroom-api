@@ -7,8 +7,8 @@ module.exports = {
     getUserByUsername(username){
         return User.findOne({username: username}).exec();
     },
-    getUserFacebookID(facebookID){
-        return User.findOne({facebookID: facebookID}).exec();
+    getUserByEmail(email){
+        return User.findOne({email: email}).exec();
     },
     getUser(query){
         return User.findOne(query).exec();
@@ -21,8 +21,7 @@ module.exports = {
                     userID: info.userID,
                     email: info.email,
                     name: info.name,
-                    password: hash,
-                    role: info.role
+                    password: hash
                 });
                 try {
                     newUser.save(function(err) {

@@ -2,20 +2,23 @@ const User = require('./userService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const constant = require('../../Utils/constant');
+const { OAuth2Client } = require('google-auth-library')
+const client = new OAuth2Client('456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com')
 
 /* POST LogIn. */
 const logIn = async (req, res, next) => {
     const { username, password } = req.body;
-    if (username && password){
+    if (username && password) {
         const user = await User.getUserByUsername(username);
-        if (user){
+        if (user) {
             bcrypt.compare(password, user.password, (err, result) => {
                 if (result === true) {
-                    var payload = { userID: user.userID };
-                    var token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                    const payload = { username: user.username };
+                    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
                     res.json({
                         isSuccess: true,
                         user: {
+                            username: user.username,
                             userID: user.userID,
                             username: user.username,
                             name: user.name,
@@ -30,7 +33,7 @@ const logIn = async (req, res, next) => {
                     })
                 }
             })
-            
+
         } else {
             res.json({
                 isSuccess: false,
@@ -46,25 +49,24 @@ const logIn = async (req, res, next) => {
 };
 
 /* POST Sign up */
-const signUp = async(req, res, next) => {
+const signUp = async (req, res, next) => {
     try {
-        let username = await User.getUserByUsername(req.body.username);
-        if (username) {
+        let user = await User.getUserByUsername(req.body.username);
+        if (user) {
             res.json({
                 isSuccess: false,
-                message: constant.usernameExisted
+                message: constant.emailExisted
             })
         } else {
             const result = await User.addUser({
-                userID: req.body.userID.trim(),
                 username: req.body.username.trim(),
                 password: req.body.password.trim(),
-                email: req.body.email.trim(),
                 name: req.body.name.trim(),
-                role: req.body.role.trim()
+                email: req.body.email.trim(),
+                userID: req.body.userID.trim(),
             });
 
-            if (result){
+            if (result) {
                 res.json({
                     isSuccess: true,
                     message: constant.signUpSuccess,
@@ -90,34 +92,27 @@ const redirectFacebookID = (req, res, next) => {
     res.redirect(constant.clientDomain + constant.redirectPath + "/facebook/" + req.user.facebookID);
 }
 
-const logInWithFacebook = async(req, res, next) => {
-    if (req.body.facebookID) {
-        const user = await User.getUser({
-            facebookID: req.body.facebookID
-        });
-        if (user){
-            var payload = { facebookID: user.facebookID };
-            var token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-            res.json({
-                isSuccess: true,
-                user: {
-                    name: user.name,
-                    email: user.email,
-                    token: token
-                }
-            })
-        } else {
-            res.json({
-                isSuccess: false,
-                message: constant.logInInvalid
-            })
-        }
-    } else {
-        res.json({
-            isSuccess: false,
-            message: constant.logInInvalid
+const logInWithFacebook = async (req, res, next) => {
+
+};
+
+const logInWithGoogle = async (req, res, next) => {
+    const { tokenID } = req.body;
+    client.verifyIdToken({idToken: tokenID, audience: "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com" })
+        .then(response => {
+            const {email_verified, name, email} = response.payload;
+            if (email_verified) {
+                User.findOne({email: email}).exec((err, user) => {
+                    if(err) {
+                        return res.status(400).json({error: err.message});
+                    } else if (user) {
+
+                    } else {
+
+                    }
+                });
+            }
         })
-    }
 };
 
 
@@ -125,6 +120,7 @@ module.exports = {
     logIn,
     signUp,
     redirectFacebookID,
-    logInWithFacebook
+    logInWithFacebook,
+    logInWithGoogle
     // updateProfile
 };

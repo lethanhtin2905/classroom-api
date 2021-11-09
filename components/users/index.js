@@ -6,14 +6,7 @@ const passportFb = require('./passport_facebook.js');
 /* POST Log In. */
 router.post('/logIn', UserController.logIn);
 
-/* GET Log In With Facebook. */
-router.get('/auth/facebook', passportFb.authenticate("facebook", {
-    scope: ["email"],
-    session: false
-}));
-router.get("/auth/facebook/redirect", passportFb.authenticate('facebook', { session: false }), UserController.redirectFacebookID);
-/* POST Log In With Facebook. */
-router.post('/logInWithFacebook', UserController.logInWithFacebook);
+router.post('/logInWithGoogle', UserController.logInWithGoogle);
 
 /* POST Sign Up. */
 router.post('/signUp', UserController.signUp);
