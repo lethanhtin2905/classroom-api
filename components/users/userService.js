@@ -37,16 +37,4 @@ module.exports = {
             })
         })
     },
-    addFacebookUser(info) {
-        const newUser = new User({
-            email: info.email,
-            name: info.name,
-            facebookID: info.facebookID,
-        });
-        try {
-            return newUser.save();
-        } catch (err) {
-            console.log('error at signUp' + err);
-        }
-    },
 };

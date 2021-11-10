@@ -1,3 +1,4 @@
+const fetch = require ('node-fetch');
 const User = require('./userService');
 const mongoose = require('mongoose');
 const UserModel = mongoose.model('Users');
@@ -6,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const constant = require('../../Utils/constant');
 const { OAuth2Client } = require('google-auth-library')
 const client = new OAuth2Client('456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com')
+
 
 /* POST LogIn. */
 const logIn = async (req, res, next) => {
@@ -19,12 +21,13 @@ const logIn = async (req, res, next) => {
                     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
                     res.json({
                         isSuccess: true,
+                        token: token,
                         user: {
+                            _id: user._id,
                             username: user.username,
                             userID: user.userID,
                             name: user.name,
-                            email: user.email,
-                            token: token
+                            email: user.email
                         }
                     })
                 } else {
@@ -88,13 +91,59 @@ const signUp = async (req, res, next) => {
     }
 };
 
-/* GET Log in With Facebook */
-const redirectFacebookID = (req, res, next) => {
-    res.redirect(constant.clientDomain + constant.redirectPath + "/facebook/" + req.user.facebookID);
-}
-
 const logInWithFacebook = async (req, res, next) => {
+    const {accessToken, userID} = req.body;
+    const urlGraphFacebook = `https://graph.facebook.com/${userID}?fields=id,name,email&access_token=${accessToken}`
+    fetch(urlGraphFacebook,{
+        method: 'GET',
+    })
+    .then(response=>response.json())
+    .then(result=>{
+        console.log(result);
+        const {email,name} = result;
+        UserModel.findOne({email: email}).exec((err, user) => {
+            if(err) {
+                return res.status(400).json({error: err.message});
+            } else if (user) {
+                const payload = { _id: user._id };
+                const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                res.json({
+                    isSuccess: true,
+                    token: token,
+                    user: {
+                        _id: user._id,
+                        username: user.username,
+                        userID: user.userID,
+                        name: user.name,
+                        email: user.email,
+                    }
+                })
+            } else {
+                const password = email + process.env.JWT_SECRET_KEY;
+                const newUser = new UserModel({
+                    userID: '',
+                    email: email,
+                    name: name,
+                    password: password,
+                });
+                try {
+                    newUser.save();
+                    res.json({
+                        isSuccess: true,
+                        user: {
+                            _id: newUser._id,
+                            userID: newUser.userID,
+                            name: newUser.name,
+                            email: newUser.email,
+                        }
+                    })
+                } catch (err) {
+                    console.log('error at signUp' + err);
+                }
+            }
+        });
 
+    })
 };
 
 const logInWithGoogle = async (req, res, next) => {
@@ -113,6 +162,7 @@ const logInWithGoogle = async (req, res, next) => {
                             isSuccess: true,
                             token: token,
                             user: {
+                                _id: user.id,
                                 username: user.username,
                                 userID: user.userID,
                                 name: user.name,
@@ -128,7 +178,16 @@ const logInWithGoogle = async (req, res, next) => {
                             password: password,
                         });
                         try {
-                            return newUser.save();
+                            newUser.save();
+                            res.json({
+                                isSuccess: true,
+                                user: {
+                                    _id: newUser._id,
+                                    userID: newUser.userID,
+                                    name: newUser.name,
+                                    email: newUser.email,
+                                }
+                            })
                         } catch (err) {
                             console.log('error at signUp' + err);
                         }
@@ -142,7 +201,6 @@ const logInWithGoogle = async (req, res, next) => {
 module.exports = {
     logIn,
     signUp,
-    redirectFacebookID,
     logInWithFacebook,
     logInWithGoogle
     // updateProfile

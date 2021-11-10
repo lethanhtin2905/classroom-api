@@ -6,6 +6,7 @@ const passport = require('./passport.js');
 router.post('/logIn', UserController.logIn);
 
 router.post('/logInWithGoogle', UserController.logInWithGoogle);
+router.post('/logInWithFacebook', UserController.logInWithFacebook);
 
 /* POST Sign Up. */
 router.post('/signUp', UserController.signUp);
