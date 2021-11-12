@@ -200,11 +200,44 @@ const logInWithGoogle = async (req, res, next) => {
         })
 };
 
+/* POST Update profile */
+const updateProfile = async(req, res, next) => {
+    try { 
+        if (!req.user._id) {
+            res.json({
+                isSuccess: false,
+                message: constant.updateProfileFail
+            })
+        } else {
+            const updatedUser = await User.updateUser(req.user._id, {
+                name: req.body.name.trim(),
+                email: req.body.email.trim(),
+                userID: req.body.studentId.trim(),
+            });
+            if (updatedUser){
+                res.json({
+                   isSuccess: true,
+                   message: constant.updateProfileSuccess
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.updateProfileFail
+                })
+            }
+        }
+    } catch (error) {
+        res.json({
+            isSuccess: false,
+            message: constant.updateProfileFail
+        })
+    }
+};
 
 module.exports = {
     logIn,
     signUp,
     logInWithFacebook,
-    logInWithGoogle
-    // updateProfile
+    logInWithGoogle,
+    updateProfile
 };
