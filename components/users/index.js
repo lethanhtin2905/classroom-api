@@ -11,7 +11,7 @@ router.post('/logInWithFacebook', UserController.logInWithFacebook);
 /* POST Sign Up. */
 router.post('/signUp', UserController.signUp);
 
-// /* POST Update profile. */
-// router.post('/updateProfile', passport.authenticate('jwt', { session: false }), UserController.updateProfile);
+ /* POST Update profile. */
+router.post('/updateProfile', passport.authenticate('jwt', { session: false }), UserController.updateProfile);
 
 module.exports = router;
