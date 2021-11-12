@@ -7,6 +7,11 @@ const classesSchema = new mongoose.Schema({
     classID: String,
     desc: String,
     teacher: String,
+    users: [{
+        _id: SchemaTypes.ObjectId,
+        name: String,
+        role: Boolean
+    }],
 }, { collection: "classes" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 mongoose.model("Classes", classesSchema);

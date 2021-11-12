@@ -10,7 +10,7 @@ opts.secretOrKey = process.env.JWT_SECRET_KEY;
 opts.passReqToCallback= true;
 
 passport.use(new JwtStrategy(opts, function(req, jwt_payload, done) {
-    User.findOne({userID: jwt_payload.userID}, function(err, user) {
+    User.findOne({_id: jwt_payload._id}, function(err, user) {
         if (err) {
             return done(err, false);
         }

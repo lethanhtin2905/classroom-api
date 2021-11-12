@@ -27,7 +27,8 @@ const logIn = async (req, res, next) => {
                             username: user.username,
                             userID: user.userID,
                             name: user.name,
-                            email: user.email
+                            email: user.email,
+                            token: token,
                         }
                     })
                 } else {
@@ -116,6 +117,7 @@ const logInWithFacebook = async (req, res, next) => {
                         userID: user.userID,
                         name: user.name,
                         email: user.email,
+                        token: token,
                     }
                 })
             } else {
@@ -167,6 +169,7 @@ const logInWithGoogle = async (req, res, next) => {
                                 userID: user.userID,
                                 name: user.name,
                                 email: user.email,
+                                token: token,
                             }
                         })
                     } else {
