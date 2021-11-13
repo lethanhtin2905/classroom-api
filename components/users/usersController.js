@@ -212,7 +212,7 @@ const updateProfile = async(req, res, next) => {
             const updatedUser = await User.updateUser(req.user._id, {
                 name: req.body.name.trim(),
                 email: req.body.email.trim(),
-                userID: req.body.studentId.trim(),
+                userID: req.body.userID.trim(),
             });
             if (updatedUser){
                 res.json({

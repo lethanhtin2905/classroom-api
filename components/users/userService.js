@@ -42,7 +42,7 @@ module.exports = {
         return User.findOneAndUpdate({_id: _id }, {
             name: info.name || "",
             email: info.email || "",
-            userID: info.studentId || ""
+            userID: info.userID || ""
         }).exec();
     }
 };
