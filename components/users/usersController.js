@@ -1,4 +1,4 @@
-const fetch = require ('node-fetch');
+const fetch = require('node-fetch');
 const User = require('./userService');
 const mongoose = require('mongoose');
 const UserModel = mongoose.model('Users');
@@ -29,6 +29,7 @@ const logIn = async (req, res, next) => {
                             name: user.name,
                             email: user.email,
                             token: token,
+                            classList: user.classList
                         }
                     })
                 } else {
@@ -69,6 +70,7 @@ const signUp = async (req, res, next) => {
                 name: req.body.name.trim(),
                 email: req.body.email.trim(),
                 userID: req.body.userID.trim(),
+                classList: []
             });
 
             if (result) {
@@ -93,70 +95,77 @@ const signUp = async (req, res, next) => {
 };
 
 const logInWithFacebook = async (req, res, next) => {
-    const {accessToken, userID} = req.body;
+    const { accessToken, userID } = req.body;
     const urlGraphFacebook = `https://graph.facebook.com/${userID}?fields=id,name,email&access_token=${accessToken}`
-    fetch(urlGraphFacebook,{
+    fetch(urlGraphFacebook, {
         method: 'GET',
     })
-    .then(response=>response.json())
-    .then(result=>{
-        console.log(result);
-        const {email,name} = result;
-        UserModel.findOne({email: email}).exec((err, user) => {
-            if(err) {
-                return res.status(400).json({error: err.message});
-            } else if (user) {
-                const payload = { _id: user._id };
-                const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-                res.json({
-                    isSuccess: true,
-                    token: token,
-                    user: {
-                        _id: user._id,
-                        username: user.username,
-                        userID: user.userID,
-                        name: user.name,
-                        email: user.email,
-                        token: token,
-                    }
-                })
-            } else {
-                const password = email + process.env.JWT_SECRET_KEY;
-                const newUser = new UserModel({
-                    userID: '',
-                    email: email,
-                    name: name,
-                    password: password,
-                });
-                try {
-                    newUser.save();
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            const { email, name } = result;
+            UserModel.findOne({ email: email }).exec((err, user) => {
+                if (err) {
+                    return res.status(400).json({ error: err.message });
+                } else if (user) {
+                    const payload = { _id: user._id };
+                    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
                     res.json({
                         isSuccess: true,
+                        token: token,
                         user: {
-                            _id: newUser._id,
-                            userID: newUser.userID,
-                            name: newUser.name,
-                            email: newUser.email,
+                            _id: user._id,
+                            username: user.username,
+                            userID: user.userID,
+                            name: user.name,
+                            email: user.email,
+                            token: token,
+                            classList: user.classList
                         }
                     })
-                } catch (err) {
-                    console.log('error at signUp' + err);
+                } else {
+                    const password = email + process.env.JWT_SECRET_KEY;
+                    const newUser = new UserModel({
+                        userID: '',
+                        email: email,
+                        name: name,
+                        password: password,
+                        classList: []
+                    });
+                    try {
+                        newUser.save();
+                        const payload = { _id: newUser._id };
+                        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                        res.json({
+                            isSuccess: true,
+                            token: token,
+                            user: {
+                                _id: newUser._id,
+                                userID: newUser.userID,
+                                name: newUser.name,
+                                email: newUser.email,
+                                token: token,
+                                classList: newUser.classList
+                            }
+                        })
+                    } catch (err) {
+                        console.log('error at signUp' + err);
+                    }
                 }
-            }
-        });
+            });
 
-    })
+        })
 };
 
 const logInWithGoogle = async (req, res, next) => {
     const { tokenID } = req.body;
-    client.verifyIdToken({idToken: tokenID, audience: "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com" })
+    client.verifyIdToken({ idToken: tokenID, audience: "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com" })
         .then(response => {
-            const {email_verified, name, email} = response.payload;
+            const { email_verified, name, email } = response.payload;
             if (email_verified) {
-                UserModel.findOne({email: email}).exec((err, user) => {
-                    if(err) {
-                        return res.status(400).json({error: err.message});
+                UserModel.findOne({ email: email }).exec((err, user) => {
+                    if (err) {
+                        return res.status(400).json({ error: err.message });
                     } else if (user) {
                         const payload = { _id: user._id };
                         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
@@ -170,6 +179,7 @@ const logInWithGoogle = async (req, res, next) => {
                                 name: user.name,
                                 email: user.email,
                                 token: token,
+                                classList: user.classList
                             }
                         })
                     } else {
@@ -179,16 +189,22 @@ const logInWithGoogle = async (req, res, next) => {
                             email: email,
                             name: name,
                             password: password,
+                            classList: []
                         });
                         try {
                             newUser.save();
+                            const payload = { _id: newUser._id };
+                            const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
                             res.json({
                                 isSuccess: true,
+                                token: token,
                                 user: {
                                     _id: newUser._id,
                                     userID: newUser.userID,
                                     name: newUser.name,
                                     email: newUser.email,
+                                    token: token,
+                                    classList: newUser.classList
                                 }
                             })
                         } catch (err) {
@@ -201,8 +217,8 @@ const logInWithGoogle = async (req, res, next) => {
 };
 
 /* POST Update profile */
-const updateProfile = async(req, res, next) => {
-    try { 
+const updateProfile = async (req, res, next) => {
+    try {
         if (!req.user._id) {
             res.json({
                 isSuccess: false,
@@ -214,10 +230,10 @@ const updateProfile = async(req, res, next) => {
                 email: req.body.email.trim(),
                 userID: req.body.userID.trim(),
             });
-            if (updatedUser){
+            if (updatedUser) {
                 res.json({
-                   isSuccess: true,
-                   message: constant.updateProfileSuccess
+                    isSuccess: true,
+                    message: constant.updateProfileSuccess
                 })
             } else {
                 res.json({

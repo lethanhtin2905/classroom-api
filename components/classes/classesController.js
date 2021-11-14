@@ -8,8 +8,7 @@ const classes = async (req, res, next) => {
             _id: cls._id,
             className: cls.className,
             classID: cls.classID,
-            desc: cls.desc,
-            teacher: cls.teacher
+            desc: cls.desc
         }
     })
     res.json(result);
@@ -21,14 +20,14 @@ const addClass = async (req, res, next) => {
         if (!req.body) {
             res.json({
                 isSuccess: false,
-                message: "Fail"
+                message: "Fail1"
             })
         } else {
             const newClass = Class.addClass({
                 className: req.body.className,
                 classID: req.body.classID,
                 desc: req.body.desc,
-                teacher: req.body.teacher
+                user: req.body.user
             });
 
             res.json({
@@ -39,7 +38,7 @@ const addClass = async (req, res, next) => {
     } catch (error) {
         res.json({
             isSuccess: false,
-            message: "Fail"
+            message: "Fail2"
         })
     }
 };

@@ -21,7 +21,8 @@ module.exports = {
                     userID: info.userID,
                     email: info.email,
                     name: info.name,
-                    password: hash
+                    password: hash,
+                    classList: []
                 });
                 try {
                     newUser.save(function(err) {

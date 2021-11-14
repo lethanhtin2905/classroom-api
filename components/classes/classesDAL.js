@@ -6,10 +6,8 @@ const classesSchema = new mongoose.Schema({
     className: String,
     classID: String,
     desc: String,
-    teacher: String,
-    users: [{
+    userList: [{
         _id: SchemaTypes.ObjectId,
-        name: String,
         role: Boolean
     }],
 }, { collection: "classes" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
