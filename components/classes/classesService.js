@@ -48,10 +48,19 @@ module.exports = {
             const newClass = new Classes({
                 className: info.className,
                 classID: info.classID,
+                createBy: {
+                    _id: info.user._id,
+                    name: info.user.name,
+                    email: info.user.email,
+                },
                 desc: info.desc,
                 userList: info.userList
             });
-            newClass.userList.push(info.user)
+            const user = {
+                _id: info.user._id,
+                role: true,
+            }
+            newClass.userList.push(user)
             newClass.save();
             Users.findOneAndUpdate(
                 { _id: info.user._id },

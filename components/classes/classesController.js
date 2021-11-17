@@ -12,6 +12,7 @@ const allClasses = async (req, res, next) => {
             _id: cls._id,
             className: cls.className,
             classID: cls.classID,
+            createBy: cls.createBy,
             desc: cls.desc,
             userList: cls.userList
         }
@@ -26,6 +27,7 @@ const myClasses = async (req, res, next) => {
             _id: cls._id,
             className: cls.className,
             classID: cls.classID,
+            createBy: cls.createBy,
             desc: cls.desc,
             userList: cls.userList
         }
@@ -44,6 +46,8 @@ const addClass = async (req, res, next) => {
         } else {
             const currentUser = {
                 _id: req.user._id,
+                name: req.user.name,
+                email: req.user.email,
                 role: true
             }
             const newClass = await Class.addClass({
