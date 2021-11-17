@@ -1,14 +1,33 @@
 const Class = require('./classesService');
+const mongoose = require('mongoose');
+const constant = require('../../Utils/constant');
+const Classes = mongoose.model('Classes');
+const Users = mongoose.model('Users')
 
 /* GET all classes. */
-const classes = async (req, res, next) => {
+const allClasses = async (req, res, next) => {
     let classes = await Class.getAllClasses();
     const result = classes.map((cls, index) => {
         return {
             _id: cls._id,
             className: cls.className,
             classID: cls.classID,
-            desc: cls.desc
+            desc: cls.desc,
+            userList: cls.userList
+        }
+    })
+    res.json(result);
+};
+
+const myClasses = async (req, res, next) => {
+    let classes = await Class.getMyClasses({},{},req.user);
+    const result = classes.map((cls, index) => {
+        return {
+            _id: cls._id,
+            className: cls.className,
+            classID: cls.classID,
+            desc: cls.desc,
+            userList: cls.userList
         }
     })
     res.json(result);
@@ -23,15 +42,20 @@ const addClass = async (req, res, next) => {
                 message: "Fail1"
             })
         } else {
-            const newClass = Class.addClass({
+            const currentUser = {
+                _id: req.user._id,
+                role: true
+            }
+            const newClass = await Class.addClass({
                 className: req.body.className,
                 classID: req.body.classID,
                 desc: req.body.desc,
-                user: req.body.user
+                user: currentUser,
+                userList: []
             });
-
             res.json({
                 isSuccess: true,
+                newClass: newClass,
                 message: "Success"
             })
         }
@@ -44,6 +68,7 @@ const addClass = async (req, res, next) => {
 };
 
 module.exports = {
-    classes,
+    allClasses,
+    myClasses,
     addClass
 };

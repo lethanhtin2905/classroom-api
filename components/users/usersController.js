@@ -12,6 +12,7 @@ const client = new OAuth2Client('456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.a
 /* POST LogIn. */
 const logIn = async (req, res, next) => {
     const { username, password } = req.body;
+    console.log(req.body)
     if (username && password) {
         const user = await User.getUserByUsername(username);
         if (user) {
@@ -59,6 +60,8 @@ const signUp = async (req, res, next) => {
     try {
         let user = await User.getUserByUsername(req.body.username);
         if (user) {
+            console.log(req.body)
+            console.log(user)
             res.json({
                 isSuccess: false,
                 message: constant.emailExisted
@@ -233,6 +236,7 @@ const updateProfile = async (req, res, next) => {
             if (updatedUser) {
                 res.json({
                     isSuccess: true,
+                    userUpdate: updatedUser,
                     message: constant.updateProfileSuccess
                 })
             } else {
