@@ -35,6 +35,21 @@ const myClasses = async (req, res, next) => {
     res.json(result);
 };
 
+const getClass = async (req, res, next) => {
+    console.log(req.params.id)
+    let cls = await Class.getClassById(req.params.id);
+    const result =  {
+            _id: cls._id,
+            className: cls.className,
+            classID: cls.classID,
+            createBy: cls.createBy,
+            desc: cls.desc,
+            userList: cls.userList
+        }
+    console.log(result);
+    res.json(result);
+};
+
 // add class
 const addClass = async (req, res, next) => {
     try {
@@ -74,5 +89,6 @@ const addClass = async (req, res, next) => {
 module.exports = {
     allClasses,
     myClasses,
-    addClass
+    addClass,
+    getClass
 };

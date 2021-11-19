@@ -12,6 +12,13 @@ module.exports = {
         const a = await allClass.exec()
         return a;
     },
+    async getClassById(id) {
+
+        const cls = Classes.findOne({_id: id})
+        const c = await cls.exec()
+        return c;
+    },
+    
     async getMyClasses(query, option, infoUser) {
         query = query || {};
         option = option || {};
