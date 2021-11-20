@@ -8,6 +8,8 @@ router.get('/', passport.authenticate('jwt', { session: false }), classesControl
 
 router.get('/:id', passport.authenticate('jwt', { session: false }), classesController.getClass);
 
+router.get('/:id/user', passport.authenticate('jwt', { session: false }), classesController.getUserOfClass);
+
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 
 module.exports = router;

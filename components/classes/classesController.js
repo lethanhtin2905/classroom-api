@@ -35,6 +35,21 @@ const myClasses = async (req, res, next) => {
     res.json(result);
 };
 
+const getUserOfClass = async (req, res, next) => {
+    let classes = await Class.getMyClasses({},{},req.user);
+    const result = classes.map((cls, index) => {
+        return {
+            _id: cls._id,
+            className: cls.className,
+            classID: cls.classID,
+            createBy: cls.createBy,
+            desc: cls.desc,
+            userList: cls.userList
+        }
+    })
+    res.json(result);
+};
+
 const getClass = async (req, res, next) => {
     console.log(req.params.id)
     let cls = await Class.getClassById(req.params.id);
@@ -90,5 +105,6 @@ module.exports = {
     allClasses,
     myClasses,
     addClass,
-    getClass
+    getClass,
+    getUserOfClass
 };

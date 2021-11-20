@@ -39,6 +39,28 @@ module.exports = {
         
         return listClass;
     },
+
+    async getUserOfClass(query, option, infoUser) {
+        query = query || {};
+        option = option || {};
+        let myClasses = [];   
+        let listClass = [];   
+        const currentUser = Users.find({_id: infoUser._id})
+        const isCurrentUser = await currentUser.exec()
+        if (isCurrentUser===[]){
+            myClasses = []
+        } else {
+            myClasses = isCurrentUser[0].classList;
+            for (var i = 0; i < myClasses.length; i++) {
+                const class_i = Classes.find({_id: myClasses[i]._id});
+                const cls_i = await class_i.exec();
+                listClass = listClass.concat(cls_i);
+            }
+        }
+        
+        return listClass;
+    },
+
     async addClass(info) {
         info = info || {};
         info.className = info.className || "";
