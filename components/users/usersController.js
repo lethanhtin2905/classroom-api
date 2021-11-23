@@ -1,18 +1,19 @@
-const fetch = require('node-fetch');
-const User = require('./userService');
-const mongoose = require('mongoose');
-const UserModel = mongoose.model('Users');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const constant = require('../../Utils/constant');
-const { OAuth2Client } = require('google-auth-library')
-const client = new OAuth2Client('456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com')
-
+const fetch = require("node-fetch");
+const User = require("./userService");
+const mongoose = require("mongoose");
+const UserModel = mongoose.model("Users");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const constant = require("../../Utils/constant");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(
+    "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com"
+);
 
 /* POST LogIn. */
 const logIn = async (req, res, next) => {
     const { username, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     if (username && password) {
         const user = await User.getUserByUsername(username);
         if (user) {
@@ -30,27 +31,26 @@ const logIn = async (req, res, next) => {
                             name: user.name,
                             email: user.email,
                             token: token,
-                            classList: user.classList
-                        }
-                    })
+                            classList: user.classList,
+                        },
+                    });
                 } else {
                     res.json({
                         isSuccess: false,
-                        message: constant.logInInvalid
-                    })
+                        message: constant.logInInvalid,
+                    });
                 }
-            })
-
+            });
         } else {
             res.json({
                 isSuccess: false,
-                message: constant.logInInvalid
-            })
+                message: constant.logInInvalid,
+            });
         }
     } else {
         res.json({
             isSuccess: false,
-            message: constant.logInInvalid
+            message: constant.logInInvalid,
         });
     }
 };
@@ -58,14 +58,18 @@ const logIn = async (req, res, next) => {
 /* POST Sign up */
 const signUp = async (req, res, next) => {
     try {
-        let user = await User.getUserByUsername(req.body.username);
-        if (user) {
-            console.log(req.body)
-            console.log(user)
+        let user1 = await User.getUserByUsername(req.body.username);
+        let user2 = await User.getUserByEmail(req.body.email);
+        if (user1) {
             res.json({
                 isSuccess: false,
-                message: constant.emailExisted
-            })
+                message: constant.usernameExisted,
+            });
+        } else if (user2) {
+            res.json({
+                isSuccess: false,
+                message: constant.emailExisted,
+            });
         } else {
             const result = await User.addUser({
                 username: req.body.username.trim(),
@@ -73,38 +77,38 @@ const signUp = async (req, res, next) => {
                 name: req.body.name.trim(),
                 email: req.body.email.trim(),
                 userID: req.body.userID.trim(),
-                classList: []
+                classList: [],
             });
 
             if (result) {
                 res.json({
                     isSuccess: true,
                     message: constant.signUpSuccess,
-                    user: result
-                })
+                    user: result,
+                });
             } else {
                 res.json({
                     isSuccess: false,
-                    message: constant.signUpFail
-                })
+                    message: constant.signUpFail,
+                });
             }
         }
     } catch (error) {
         res.json({
             isSuccess: false,
-            message: constant.signUpFail
-        })
+            message: constant.signUpFail,
+        });
     }
 };
 
 const logInWithFacebook = async (req, res, next) => {
     const { accessToken, userID } = req.body;
-    const urlGraphFacebook = `https://graph.facebook.com/${userID}?fields=id,name,email&access_token=${accessToken}`
+    const urlGraphFacebook = `https://graph.facebook.com/${userID}?fields=id,name,email&access_token=${accessToken}`;
     fetch(urlGraphFacebook, {
-        method: 'GET',
+        method: "GET",
     })
-        .then(response => response.json())
-        .then(result => {
+        .then((response) => response.json())
+        .then((result) => {
             console.log(result);
             const { email, name } = result;
             UserModel.findOne({ email: email }).exec((err, user) => {
@@ -113,27 +117,30 @@ const logInWithFacebook = async (req, res, next) => {
                 } else if (user) {
                     const payload = { _id: user._id };
                     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                    UserModel.findOneAndUpdate({_id: user._id }, {
+                        name: name,
+                    }).exec();
                     res.json({
                         isSuccess: true,
                         token: token,
                         user: {
                             _id: user._id,
-                            username: user.username,
+                            username: name,
                             userID: user.userID,
                             name: user.name,
                             email: user.email,
                             token: token,
-                            classList: user.classList
-                        }
-                    })
+                            classList: user.classList,
+                        },
+                    });
                 } else {
                     const password = email + process.env.JWT_SECRET_KEY;
                     const newUser = new UserModel({
-                        userID: '',
+                        userID: "",
                         email: email,
                         name: name,
                         password: password,
-                        classList: []
+                        classList: [],
                     });
                     try {
                         newUser.save();
@@ -148,22 +155,26 @@ const logInWithFacebook = async (req, res, next) => {
                                 name: newUser.name,
                                 email: newUser.email,
                                 token: token,
-                                classList: newUser.classList
-                            }
-                        })
+                                classList: newUser.classList,
+                            },
+                        });
                     } catch (err) {
-                        console.log('error at signUp' + err);
+                        console.log("error at signUp" + err);
                     }
                 }
             });
-
-        })
+        });
 };
 
 const logInWithGoogle = async (req, res, next) => {
     const { tokenID } = req.body;
-    client.verifyIdToken({ idToken: tokenID, audience: "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com" })
-        .then(response => {
+    client
+        .verifyIdToken({
+            idToken: tokenID,
+            audience:
+                "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com",
+        })
+        .then((response) => {
             const { email_verified, name, email } = response.payload;
             if (email_verified) {
                 UserModel.findOne({ email: email }).exec((err, user) => {
@@ -172,6 +183,9 @@ const logInWithGoogle = async (req, res, next) => {
                     } else if (user) {
                         const payload = { _id: user._id };
                         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+                        UserModel.findOneAndUpdate({_id: user._id }, {
+                            name: name,
+                        }).exec();
                         res.json({
                             isSuccess: true,
                             token: token,
@@ -179,20 +193,20 @@ const logInWithGoogle = async (req, res, next) => {
                                 _id: user.id,
                                 username: user.username,
                                 userID: user.userID,
-                                name: user.name,
+                                name: name,
                                 email: user.email,
                                 token: token,
-                                classList: user.classList
-                            }
-                        })
+                                classList: user.classList,
+                            },
+                        });
                     } else {
                         const password = email + process.env.JWT_SECRET_KEY;
                         const newUser = new UserModel({
-                            userID: '',
+                            userID: "",
                             email: email,
                             name: name,
                             password: password,
-                            classList: []
+                            classList: [],
                         });
                         try {
                             newUser.save();
@@ -207,16 +221,16 @@ const logInWithGoogle = async (req, res, next) => {
                                     name: newUser.name,
                                     email: newUser.email,
                                     token: token,
-                                    classList: newUser.classList
-                                }
-                            })
+                                    classList: newUser.classList,
+                                },
+                            });
                         } catch (err) {
-                            console.log('error at signUp' + err);
+                            console.log("error at signUp" + err);
                         }
                     }
                 });
             }
-        })
+        });
 };
 
 /* POST Update profile */
@@ -225,8 +239,8 @@ const updateProfile = async (req, res, next) => {
         if (!req.user._id) {
             res.json({
                 isSuccess: false,
-                message: constant.updateProfileFail
-            })
+                message: constant.updateProfileFail,
+            });
         } else {
             const updatedUser = await User.updateUser(req.user._id, {
                 name: req.body.name.trim(),
@@ -237,20 +251,20 @@ const updateProfile = async (req, res, next) => {
                 res.json({
                     isSuccess: true,
                     userUpdate: updatedUser,
-                    message: constant.updateProfileSuccess
-                })
+                    message: constant.updateProfileSuccess,
+                });
             } else {
                 res.json({
                     isSuccess: false,
-                    message: constant.updateProfileFail
-                })
+                    message: constant.updateProfileFail,
+                });
             }
         }
     } catch (error) {
         res.json({
             isSuccess: false,
-            message: constant.updateProfileFail
-        })
+            message: constant.updateProfileFail,
+        });
     }
 };
 
@@ -259,5 +273,5 @@ module.exports = {
     signUp,
     logInWithFacebook,
     logInWithGoogle,
-    updateProfile
+    updateProfile,
 };

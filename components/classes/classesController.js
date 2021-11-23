@@ -36,15 +36,13 @@ const myClasses = async (req, res, next) => {
 };
 
 const getUserOfClass = async (req, res, next) => {
-    let classes = await Class.getMyClasses({},{},req.user);
-    const result = classes.map((cls, index) => {
+    let users = await Class.getUserList({},{},req.params.id);
+    const result = users.map((u, index) => {
         return {
-            _id: cls._id,
-            className: cls.className,
-            classID: cls.classID,
-            createBy: cls.createBy,
-            desc: cls.desc,
-            userList: cls.userList
+            _id: u._id,
+            name: u.name,
+            email: u.email,
+            classList: u.classList
         }
     })
     res.json(result);
@@ -101,10 +99,39 @@ const addClass = async (req, res, next) => {
     }
 };
 
+const invitedUser = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            const info = {
+                currentUser: req.user,
+                currentClass: req.params.id,
+                email: req.body.email,
+                role: req.body.role
+            }
+            const newClass = await Class.invited(info);
+            res.json({
+                isSuccess: true,
+                message: "Success"
+            })
+        }
+    } catch (error) {
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+};
+
 module.exports = {
     allClasses,
     myClasses,
     addClass,
     getClass,
-    getUserOfClass
+    getUserOfClass,
+    invitedUser
 };
