@@ -3,6 +3,20 @@ const constant = require('../../Utils/constant');
 const { invitedUser } = require('./classesController');
 const Classes = mongoose.model('Classes');
 const Users = mongoose.model('Users')
+const nodemailer = require('nodemailer');
+
+// Configure nodemailer
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: "gradebook18120595@gmail.com",
+        pass: "18120595"
+    }
+});
+
+var mailOptions = {
+    from: "gradebook18120595@gmail.com"
+};
 
 module.exports = {
     async getAllClasses(query, option) {
@@ -190,5 +204,17 @@ module.exports = {
 
 
         }
+
+        mailOptions.to = email;
+        mailOptions.subject = 'Bạn đã được mời vào một lớp học';
+        mailOptions.text = 'Để kích hoạt tài khoản, vui lòng truy cập đường dẫn sau: '
+        // Send email
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ');
+            }
+        });
     },
 }

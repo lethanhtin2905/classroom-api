@@ -100,7 +100,7 @@ const addClass = async (req, res, next) => {
 };
 
 const invitedUser = async (req, res, next) => {
-    try {
+    // try {
         if (!req.body) {
             res.json({
                 isSuccess: false,
@@ -119,12 +119,12 @@ const invitedUser = async (req, res, next) => {
                 message: "Success"
             })
         }
-    } catch (error) {
-        res.json({
-            isSuccess: false,
-            message: "Fail2"
-        })
-    }
+    // } catch (error) {
+    //     res.json({
+    //         isSuccess: false,
+    //         message: error
+    //     })
+    // }
 };
 
 module.exports = {
