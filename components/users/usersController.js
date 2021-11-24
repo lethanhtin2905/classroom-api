@@ -175,10 +175,11 @@ const logInWithFacebook = async (req, res, next) => {
 };
 
 const logInWithGoogle = async (req, res, next) => {
-    const { tokenID } = req.body;
-    client
+    const tokenId = req.body.tokenId;
+    
+    await client
         .verifyIdToken({
-            idToken: tokenID,
+            idToken: tokenId,
             audience:
                 "456562452797-8l37bdgcv5uuacglkgjpkobpvs6nelli.apps.googleusercontent.com",
         })

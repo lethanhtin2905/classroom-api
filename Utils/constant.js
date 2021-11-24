@@ -2,6 +2,8 @@ const SALT_ROUNDS = 7;
 
 const clientDomain = 'http://localhost:3000';
 const serverDomain = 'http://localhost:3030';
+// const clientDomain = 'https://midtern-18120595.herokuapp.com'
+// const serverDomain = 'https://midtern-18120595-api.herokuapp.com/';
 const redirectPath = '/redirect';
 const tokenCheckIn = '&token=';
 
