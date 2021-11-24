@@ -60,6 +60,7 @@ const signUp = async (req, res, next) => {
     try {
         let user1 = await User.getUserByUsername(req.body.username);
         let user2 = await User.getUserByEmail(req.body.email);
+        let user3 = await User.getUserByUserID(req.body.userID);
         if (user1) {
             res.json({
                 isSuccess: false,
@@ -70,6 +71,11 @@ const signUp = async (req, res, next) => {
                 isSuccess: false,
                 message: constant.emailExisted,
             });
+        } else if (UNSIGNED_INT_SAMPLER_3D) {
+            res.json({
+                isSuccess: false,
+                message: constant.studentIDExisted,
+            })
         } else {
             const result = await User.addUser({
                 username: req.body.username.trim(),
@@ -117,7 +123,7 @@ const logInWithFacebook = async (req, res, next) => {
                 } else if (user) {
                     const payload = { _id: user._id };
                     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-                    UserModel.findOneAndUpdate({_id: user._id }, {
+                    UserModel.findOneAndUpdate({ _id: user._id }, {
                         name: name,
                     }).exec();
                     res.json({
@@ -183,7 +189,7 @@ const logInWithGoogle = async (req, res, next) => {
                     } else if (user) {
                         const payload = { _id: user._id };
                         const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-                        UserModel.findOneAndUpdate({_id: user._id }, {
+                        UserModel.findOneAndUpdate({ _id: user._id }, {
                             name: name,
                         }).exec();
                         res.json({
@@ -256,7 +262,7 @@ const updateProfile = async (req, res, next) => {
             } else {
                 res.json({
                     isSuccess: false,
-                    message: constant.updateProfileFail,
+                    message: constant.studentIDExisted,
                 });
             }
         }

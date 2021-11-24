@@ -4,13 +4,16 @@ const bcrypt = require('bcryptjs');
 const User = mongoose.model('Users');
 
 module.exports = {
-    getUserByUsername(username){
-        return User.findOne({username: username}).exec();
+    getUserByUsername(username) {
+        return User.findOne({ username: username }).exec();
     },
-    getUserByEmail(email){
-        return User.findOne({email: email}).exec();
+    getUserByEmail(email) {
+        return User.findOne({ email: email }).exec();
     },
-    getUser(query){
+    getUserByUserID(userID) {
+        return User.findOne({ userID: userID }).exec();
+    },
+    getUser(query) {
         return User.findOne(query).exec();
     },
     addUser(info) {
@@ -25,7 +28,7 @@ module.exports = {
                     classList: []
                 });
                 try {
-                    newUser.save(function(err) {
+                    newUser.save(function (err) {
                         if (err) {
                             resolve(false);
                         } else {
@@ -38,12 +41,19 @@ module.exports = {
             })
         })
     },
-    updateUser(_id, info){
+    async updateUser(_id, info) {
         info = info || {};
-        return User.findOneAndUpdate({_id: _id }, {
-            name: info.name || "",
-            email: info.email || "",
-            userID: info.userID || ""
-        }).exec();
+        const userExist = User.find({ userID: info.userID })
+        const isUserExist = await userExist.exec()
+        if (isUserExist.length !== 0) {
+            // console.log('môn học đã tồn tại', isClassExist);
+            return null;
+        } else {
+            return User.findOneAndUpdate({ _id: _id }, {
+                name: info.name || "",
+                email: info.email || "",
+                userID: info.userID || ""
+            }).exec();
+        }
     }
 };

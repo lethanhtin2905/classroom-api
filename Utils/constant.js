@@ -9,6 +9,8 @@ const tokenCheckIn = '&token=';
 const logInInvalid = "Username or Password invalid!!!";
 const emailExisted = "Email has already existed";
 const usernameExisted = "User name has already existed";
+const classExisted = "Class ID has already existed";
+const studentIDExisted = "Student ID has already existed";
 const signUpSuccess = "Register successfully !!!";
 const signUpFail = "Register fail !!!";
 const updateProfileSuccess = "Update Profile success !!!";
@@ -24,7 +26,9 @@ module.exports = {
     // Messages
     logInInvalid,
     usernameExisted,
+    classExisted,
     emailExisted,
+    studentIDExisted,
     signUpSuccess,
     signUpFail,
     updateProfileSuccess,

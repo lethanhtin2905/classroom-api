@@ -21,7 +21,7 @@ const allClasses = async (req, res, next) => {
 };
 
 const myClasses = async (req, res, next) => {
-    let classes = await Class.getMyClasses({},{},req.user);
+    let classes = await Class.getMyClasses({}, {}, req.user);
     const result = classes.map((cls, index) => {
         return {
             _id: cls._id,
@@ -36,7 +36,7 @@ const myClasses = async (req, res, next) => {
 };
 
 const getUserOfClass = async (req, res, next) => {
-    let users = await Class.getUserList({},{},req.params.id);
+    let users = await Class.getUserList({}, {}, req.params.id);
     const result = users.map((u, index) => {
         return {
             _id: u._id,
@@ -51,14 +51,14 @@ const getUserOfClass = async (req, res, next) => {
 const getClass = async (req, res, next) => {
     console.log(req.params.id)
     let cls = await Class.getClassById(req.params.id);
-    const result =  {
-            _id: cls._id,
-            className: cls.className,
-            classID: cls.classID,
-            createBy: cls.createBy,
-            desc: cls.desc,
-            userList: cls.userList
-        }
+    const result = {
+        _id: cls._id,
+        className: cls.className,
+        classID: cls.classID,
+        createBy: cls.createBy,
+        desc: cls.desc,
+        userList: cls.userList
+    }
     console.log(result);
     res.json(result);
 };
@@ -85,11 +85,18 @@ const addClass = async (req, res, next) => {
                 user: currentUser,
                 userList: []
             });
-            res.json({
-                isSuccess: true,
-                newClass: newClass,
-                message: "Success"
-            })
+            if (newClass) {
+                res.json({
+                    isSuccess: true,
+                    newClass: newClass,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
         }
     } catch (error) {
         res.json({
@@ -100,7 +107,7 @@ const addClass = async (req, res, next) => {
 };
 
 const invitedUser = async (req, res, next) => {
-    // try {
+    try {
         if (!req.body) {
             res.json({
                 isSuccess: false,
@@ -119,19 +126,20 @@ const invitedUser = async (req, res, next) => {
                 message: "Success"
             })
         }
-    // } catch (error) {
-    //     res.json({
-    //         isSuccess: false,
-    //         message: error
-    //     })
-    // }
+    } catch (error) {
+        res.json({
+            isSuccess: false,
+            message: error
+        })
+    }
 };
 
 module.exports = {
     allClasses,
     myClasses,
     addClass,
+    invitedUser,
     getClass,
     getUserOfClass,
-    invitedUser
+
 };
