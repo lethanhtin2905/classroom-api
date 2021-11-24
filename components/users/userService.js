@@ -46,7 +46,6 @@ module.exports = {
         const userExist = User.find({ userID: info.userID })
         const isUserExist = await userExist.exec()
         if (isUserExist.length !== 0) {
-            // console.log('môn học đã tồn tại', isClassExist);
             return null;
         } else {
             return User.findOneAndUpdate({ _id: _id }, {

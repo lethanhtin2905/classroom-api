@@ -60,7 +60,6 @@ const signUp = async (req, res, next) => {
     try {
         let user1 = await User.getUserByUsername(req.body.username);
         let user2 = await User.getUserByEmail(req.body.email);
-        let user3 = await User.getUserByUserID(req.body.userID);
         if (user1) {
             res.json({
                 isSuccess: false,
@@ -71,11 +70,14 @@ const signUp = async (req, res, next) => {
                 isSuccess: false,
                 message: constant.emailExisted,
             });
-        } else if (UNSIGNED_INT_SAMPLER_3D) {
-            res.json({
-                isSuccess: false,
-                message: constant.studentIDExisted,
-            })
+        } else if (req.body.userID) {
+            let user3 = await User.getUserByUserID(req.body.userID);
+            if (user3) {
+                res.json({
+                    isSuccess: false,
+                    message: constant.studentIDExisted,
+                })
+            }
         } else {
             const result = await User.addUser({
                 username: req.body.username.trim(),

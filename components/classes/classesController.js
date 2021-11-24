@@ -49,7 +49,6 @@ const getUserOfClass = async (req, res, next) => {
 };
 
 const getClass = async (req, res, next) => {
-    console.log(req.params.id)
     let cls = await Class.getClassById(req.params.id);
     const result = {
         _id: cls._id,

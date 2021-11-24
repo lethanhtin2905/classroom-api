@@ -137,7 +137,6 @@ module.exports = {
         const classExist = Classes.find({ _id: currentClass })
         const isClassExist = await classExist.exec()
         if (isClassExist.length === 0) {
-            console.log('Lớp học không tồn tại', isClassExist);
             return null;
         } else {
             const userExist = Users.find({ email: email })
@@ -206,8 +205,11 @@ module.exports = {
         }
 
         mailOptions.to = email;
-        mailOptions.subject = 'Bạn đã được mời vào một lớp học';
-        mailOptions.text = 'Để kích hoạt tài khoản, vui lòng truy cập đường dẫn sau: '
+        mailOptions.subject = 'BẠN ĐƯỢC MỜI THAM GIA MỘT LỚP HỌC';
+        mailOptions.text = 'Người dùng ' + currentUser.name + ' (' + currentUser.email + ') đã mời bạn tham gia một lớp học. ' +
+                            'Vui lòng sử dụng email ' + email + ' để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: ' +
+                            'http://localhost:3000/' + currentClass
+
         // Send email
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
