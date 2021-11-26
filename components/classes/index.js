@@ -8,7 +8,7 @@ router.get('/', passport.authenticate('jwt', { session: false }), classesControl
 
 router.get('/:id', passport.authenticate('jwt', { session: false }), classesController.getClass);
 
-router.get('/:id/user', passport.authenticate('jwt', { session: false }), classesController.getUserOfClass);
+router.get('/:id/users', passport.authenticate('jwt', { session: false }), classesController.getUserOfClass);
 
 router.post('/:id/invited', passport.authenticate('jwt', { session: false }), classesController.invitedUser);
 
