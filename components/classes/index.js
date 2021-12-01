@@ -16,9 +16,9 @@ router.get('/:id/grade-structure', passport.authenticate('jwt', { session: false
 
 router.post('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.addGrade);
 
-// router.post('/:id/grade-structure/delete', passport.authenticate('jwt', { session: false }), classesController.deleteGrade);
+router.delete('/:id/grade-structure/:idGrade', passport.authenticate('jwt', { session: false }), classesController.deleteGrade);
 
-// router.post('/:id/grade-structure/update', passport.authenticate('jwt', { session: false }), classesController.updateGrade);
+router.put('/:id/grade-structure/:idGrade', passport.authenticate('jwt', { session: false }), classesController.updateGrade);
 
 router.post('/:id/grade-structure/arrange', passport.authenticate('jwt', { session: false }), classesController.arrangeGrade);
 

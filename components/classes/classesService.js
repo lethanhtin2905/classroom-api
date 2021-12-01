@@ -329,4 +329,63 @@ module.exports = {
             return true;
         }
     },
+
+    async deleteGrade(info) {
+        info = info || {};
+        info.gradeID = info.gradeID || '';
+        info.classID = info.classID || "";
+        const gradeExist = GradeStructure.find({ classID: info.classID })
+        const isGradeExist = await gradeExist.exec()
+        if (isGradeExist.length == 0) {
+            return null;
+        } else {
+            // const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+            let gradeList = isGradeExist[0].gradeList;
+            for (var i = 0; i< gradeList.length; i++) {
+                if (gradeList[i]._id==info.gradeID){
+                    gradeList.splice(i,1) 
+                }
+            }
+            GradeStructure.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $set: {
+                        gradeList: gradeList
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return true;
+        }
+    },
+
+    async updateGrade(info) {
+        info = info || {};
+        info.gradeID = info.gradeID || '';
+        info.name = info.name || '';
+        info.grade = info.grade || '';
+        info.classID = info.classID || "";
+        const gradeExist = GradeStructure.find({ classID: info.classID })
+        const isGradeExist = await gradeExist.exec()
+        if (isGradeExist.length == 0) {
+            return null;
+        } else {
+            // const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+            let gradeList = isGradeExist[0].gradeList;
+            for (var i = 0; i< gradeList.length; i++) {
+                if (gradeList[i]._id==info.gradeID){
+                    gradeList[i].name = info.name;
+                    gradeList[i].grade = parseInt(info.grade);
+                }
+            }
+            GradeStructure.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $set: {
+                        gradeList: gradeList
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return true;
+        }
+    },
 }

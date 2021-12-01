@@ -188,7 +188,6 @@ const arrangeGrade = async (req, res, next) => {
                 message: "Fail1"
             })
         } else {
-            console.log(req.body.newItems)
             const newGrade = await Class.arrangeGrade({
                 listGrade: req.body.newItems,
                 classID: req.params.id,
@@ -197,6 +196,74 @@ const arrangeGrade = async (req, res, next) => {
                 res.json({
                     isSuccess: true,
                     // newGrade: newGrade,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+}
+const deleteGrade = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            const newGrade = await Class.deleteGrade({
+                classID: req.params.id,
+                gradeID: req.params.idGrade
+            });
+            if (newGrade) {
+                res.json({
+                    isSuccess: true,
+                    // newGrade: newGrade,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+}
+
+const updateGrade = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            const newGrade = await Class.updateGrade({
+                classID: req.params.id,
+                name: req.body.name,
+                grade: req.body.grade,
+                gradeID: req.params.idGrade
+            });
+            if (newGrade) {
+                res.json({
+                    isSuccess: true,
                     message: "Success"
                 })
             } else {
@@ -224,5 +291,7 @@ module.exports = {
     getUserOfClass,
     getGradeStructure,
     addGrade,
-    arrangeGrade
+    arrangeGrade,
+    deleteGrade,
+    updateGrade
 }
