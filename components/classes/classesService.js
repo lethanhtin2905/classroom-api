@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const constant = require('../../Utils/constant');
-const { invitedUser } = require('./classesController');
 const Classes = mongoose.model('Classes');
 const Users = mongoose.model('Users')
+const GradeStructure = mongoose.model('GradeStructure')
 const nodemailer = require('nodemailer');
 
 // Configure nodemailer
@@ -106,6 +106,11 @@ module.exports = {
             }
             newClass.userList.push(user)
             newClass.save();
+            const newGradeStructure = new GradeStructure({
+                classID: newClass._id,
+                gradeList: []
+            })
+            newGradeStructure.save();
             Users.findOneAndUpdate(
                 { _id: info.user._id },
                 {
@@ -219,4 +224,21 @@ module.exports = {
             }
         });
     },
+
+    async getGradeStructure(id) {
+        let listGrade = [];
+        let grade = [];
+        const currentStructure = GradeStructure.find({ classId: id })
+        const isCurrentStructure = await currentStructure.exec()
+        if (isCurrentStructure === []) {
+            listGrade = []
+        } else {
+            grade = isCurrentStructure[0].gradeList;
+            for (var i = 0; i < grade.length; i++) {
+                listGrade = listGrade.concat(grade[i]);
+            }
+        }
+
+        return listGrade;
+    }
 }

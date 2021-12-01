@@ -18,3 +18,15 @@ const classesSchema = new mongoose.Schema({
 }, { collection: "classes" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 mongoose.model("Classes", classesSchema);
+
+// Grade Structure
+const gradeStructureSchema = new mongoose.Schema({
+    classID: SchemaTypes.ObjectId,
+    gradeList: [{
+        id: Number,
+        name: String,
+        grade: Number,
+    }],
+}, { collection: "gradeStructure" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
+
+mongoose.model("GradeStructure", gradeStructureSchema);

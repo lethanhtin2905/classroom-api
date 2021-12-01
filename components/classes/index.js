@@ -12,6 +12,8 @@ router.get('/:id/users', passport.authenticate('jwt', { session: false }), class
 
 router.post('/:id/invited', passport.authenticate('jwt', { session: false }), classesController.invitedUser);
 
+router.get('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.getGradeStructure);
+
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 
 module.exports = router;

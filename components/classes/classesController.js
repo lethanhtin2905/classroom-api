@@ -133,6 +133,18 @@ const invitedUser = async (req, res, next) => {
     }
 };
 
+const getGradeStructure = async (req, res, next) => {
+    let gradeStructure = await Class.getGradeStructure(req.params.id);
+    const result = gradeStructure.map((grade, index) => {
+        return {
+            id: grade.id,
+            name: grade.name,
+            grade: grade.grade,
+        }
+    })
+    res.json(result);
+}
+
 module.exports = {
     allClasses,
     myClasses,
@@ -140,5 +152,5 @@ module.exports = {
     invitedUser,
     getClass,
     getUserOfClass,
-
-};
+    getGradeStructure,
+}
