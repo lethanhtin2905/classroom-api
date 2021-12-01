@@ -23,7 +23,7 @@ mongoose.model("Classes", classesSchema);
 const gradeStructureSchema = new mongoose.Schema({
     classID: SchemaTypes.ObjectId,
     gradeList: [{
-        id: Number,
+        _id: SchemaTypes.ObjectId,
         name: String,
         grade: Number,
     }],

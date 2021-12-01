@@ -14,6 +14,14 @@ router.post('/:id/invited', passport.authenticate('jwt', { session: false }), cl
 
 router.get('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.getGradeStructure);
 
+router.post('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.addGrade);
+
+// router.post('/:id/grade-structure/delete', passport.authenticate('jwt', { session: false }), classesController.deleteGrade);
+
+// router.post('/:id/grade-structure/update', passport.authenticate('jwt', { session: false }), classesController.updateGrade);
+
+router.post('/:id/grade-structure/arrange', passport.authenticate('jwt', { session: false }), classesController.arrangeGrade);
+
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 
 module.exports = router;

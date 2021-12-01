@@ -137,12 +137,82 @@ const getGradeStructure = async (req, res, next) => {
     let gradeStructure = await Class.getGradeStructure(req.params.id);
     const result = gradeStructure.map((grade, index) => {
         return {
-            id: grade.id,
+            _id: grade._id,
             name: grade.name,
             grade: grade.grade,
         }
     })
     res.json(result);
+}
+
+const addGrade = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            const newGrade = await Class.addGrade({
+                name: req.body.name,
+                classID: req.params.id,
+                grade: req.body.grade,
+            });
+            if (newGrade) {
+                res.json({
+                    isSuccess: true,
+                    newGrade: newGrade,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+}
+
+const arrangeGrade = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            console.log(req.body.newItems)
+            const newGrade = await Class.arrangeGrade({
+                listGrade: req.body.newItems,
+                classID: req.params.id,
+            });
+            if (newGrade) {
+                res.json({
+                    isSuccess: true,
+                    // newGrade: newGrade,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
 }
 
 module.exports = {
@@ -153,4 +223,6 @@ module.exports = {
     getClass,
     getUserOfClass,
     getGradeStructure,
+    addGrade,
+    arrangeGrade
 }

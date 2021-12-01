@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const SchemaTypes = mongoose.Types;
 const constant = require('../../Utils/constant');
 const Classes = mongoose.model('Classes');
 const Users = mongoose.model('Users')
@@ -212,8 +213,8 @@ module.exports = {
         mailOptions.to = email;
         mailOptions.subject = 'BẠN ĐƯỢC MỜI THAM GIA MỘT LỚP HỌC';
         mailOptions.text = 'Người dùng ' + currentUser.name + ' (' + currentUser.email + ') đã mời bạn tham gia một lớp học. ' +
-                            'Vui lòng sử dụng email ' + email + ' để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: ' +
-                            'http://localhost:3000/' + currentClass
+            'Vui lòng sử dụng email ' + email + ' để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: ' +
+            'http://localhost:3000/' + currentClass
 
         // Send email
         transporter.sendMail(mailOptions, function (error, info) {
@@ -228,9 +229,9 @@ module.exports = {
     async getGradeStructure(id) {
         let listGrade = [];
         let grade = [];
-        const currentStructure = GradeStructure.find({ classId: id })
+        const currentStructure = GradeStructure.find({ classID: id })
         const isCurrentStructure = await currentStructure.exec()
-        if (isCurrentStructure === []) {
+        if (isCurrentStructure[0].gradeList === []) {
             listGrade = []
         } else {
             grade = isCurrentStructure[0].gradeList;
@@ -240,5 +241,92 @@ module.exports = {
         }
 
         return listGrade;
-    }
+    },
+
+    async addGrade(info) {
+        info = info || {};
+        info.name = info.name || "";
+        info.grade = info.grade || "";
+        info.classID = info.classID || "";
+        const gradeExist = GradeStructure.find({ classID: info.classID })
+        const isGradeExist = await gradeExist.exec()
+        if (isGradeExist.length == 0) {
+            return null;
+        } else {
+            const newGrade = {_id: new SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+
+            GradeStructure.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $push: {
+                        gradeList:
+                        {
+                            _id: newGrade._id,
+                            name: info.name,
+                            grade: parseInt(info.grade)
+                        }
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return {
+                _id: newGrade._id,
+                            name: info.name,
+                            grade: parseInt(info.grade)
+            };
+        }
+    },
+
+    async deleteGrade(info) {
+        info = info || {};
+        info.name = info.name || "";
+        info.grade = info.grade || "";
+        info.classID = info.classID || "";
+        const gradeExist = GradeStructure.find({ classID: info.classID })
+        const isGradeExist = await gradeExist.exec()
+        if (isGradeExist.length == 0) {
+            return null;
+        } else {
+            const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+
+            GradeStructure.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $push: {
+                        gradeList:
+                        {
+                            _id: new SchemaTypes.ObjectId,
+                            name: info.name,
+                            grade: parseInt(info.grade)
+                        }
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return {
+                _id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)
+            };
+        }
+    },    
+
+    async arrangeGrade(info) {
+        info = info || {};
+        info.listGrade = info.listGrade || [];
+        info.classID = info.classID || "";
+        const gradeExist = GradeStructure.find({ classID: info.classID })
+        const isGradeExist = await gradeExist.exec()
+        if (isGradeExist.length == 0) {
+            return null;
+        } else {
+            // const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+
+            GradeStructure.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $set: {
+                        gradeList: info.listGrade
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return true;
+        }
+    },
 }
