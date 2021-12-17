@@ -15,7 +15,7 @@ const classesSchema = new mongoose.Schema({
         _id: SchemaTypes.ObjectId,
         role: Boolean
     }],
-}, { collection: "classes" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
+}, { collection: "classes" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 mongoose.model("Classes", classesSchema);
 
@@ -27,6 +27,22 @@ const gradeStructureSchema = new mongoose.Schema({
         name: String,
         grade: Number,
     }],
-}, { collection: "gradeStructure" }, { toJSON: { virtuals: true }, toObject: { virtuals: true }});
+}, { collection: "gradeStructure" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 mongoose.model("GradeStructure", gradeStructureSchema);
+
+// Grade
+const gradeSchema = new mongoose.Schema({
+    classID: SchemaTypes.ObjectId,
+    students: [{
+        name: String,
+        studentId: String,
+        grade: [{
+            _id: SchemaTypes.ObjectId,
+            name: String,
+            grade: Number,
+        }]
+    }],
+}, { collection: "grade" }, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+mongoose.model("Grade", gradeSchema);

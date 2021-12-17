@@ -1,8 +1,6 @@
 const Class = require('./classesService');
 const mongoose = require('mongoose');
 const constant = require('../../Utils/constant');
-const Classes = mongoose.model('Classes');
-const Users = mongoose.model('Users')
 
 /* GET all classes. */
 const allClasses = async (req, res, next) => {
@@ -282,6 +280,44 @@ const updateGrade = async (req, res, next) => {
     }
 }
 
+const getGradeBoard = async (req, res, next) => {
+
+}
+
+const addGradeBoard = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail1"
+            })
+        } else {
+            const newGradeBoard = await Class.addGradeBoard({
+                classID: req.params.id,
+                data: req.body.data,
+            });
+            if (newGradeBoard) {
+                res.json({
+                    isSuccess: true,
+                    newGradeBoard: newGradeBoard,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: constant.classExisted
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+}
+
 module.exports = {
     allClasses,
     myClasses,
@@ -293,5 +329,7 @@ module.exports = {
     addGrade,
     arrangeGrade,
     deleteGrade,
-    updateGrade
+    updateGrade,
+    getGradeBoard,
+    addGradeBoard
 }

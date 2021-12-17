@@ -4,6 +4,7 @@ const constant = require('../../Utils/constant');
 const Classes = mongoose.model('Classes');
 const Users = mongoose.model('Users')
 const GradeStructure = mongoose.model('GradeStructure')
+const Grade = mongoose.model('Grade')
 const nodemailer = require('nodemailer');
 
 // Configure nodemailer
@@ -87,7 +88,6 @@ module.exports = {
         const classExist = Classes.find({ classID: info.classID })
         const isClassExist = await classExist.exec()
         if (isClassExist.length !== 0) {
-            console.log('môn học đã tồn tại', isClassExist);
             return null;
         } else {
             const newClass = new Classes({
@@ -386,6 +386,23 @@ module.exports = {
                 },
                 { safe: true, new: true }).exec()
             return true;
+        }
+    },
+
+    async addGradeBoard(info) {
+        info = info || {};
+        info.data = info.data || {};
+        info.classID = info.classID || "";
+        const gradeBoardExist = Grade.find({ classID: info.classID })
+        const isGradeBoardExist = await gradeBoardExist.exec()
+        if (isGradeBoardExist.length == 0) {
+            return null;
+        } else {
+            const newGradeBoard = new Grade({
+                classID: info.classID,
+                students: info.data,
+            });
+            newGradeBoard.save();
         }
     },
 }
