@@ -395,7 +395,7 @@ module.exports = {
         info.classID = info.classID || "";
         const gradeBoardExist = Grade.find({ classID: info.classID })
         const isGradeBoardExist = await gradeBoardExist.exec()
-        if (isGradeBoardExist.length == 0) {
+        if (isGradeBoardExist.length !== 0) {
             return null;
         } else {
             const newGradeBoard = new Grade({
@@ -403,6 +403,13 @@ module.exports = {
                 students: info.data,
             });
             newGradeBoard.save();
+
+            return {
+                _id: newGradeBoard._id,
+                classID: newGradeBoard.classID,
+                students: newGradeBoard.students
+            };
         }
+        
     },
 }

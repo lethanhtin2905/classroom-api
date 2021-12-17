@@ -289,7 +289,7 @@ const addGradeBoard = async (req, res, next) => {
         if (!req.body) {
             res.json({
                 isSuccess: false,
-                message: "Fail1"
+                message: "Fail"
             })
         } else {
             const newGradeBoard = await Class.addGradeBoard({
@@ -305,7 +305,7 @@ const addGradeBoard = async (req, res, next) => {
             } else {
                 res.json({
                     isSuccess: false,
-                    message: constant.classExisted
+                    message: "Fail1"
                 })
             }
         }
