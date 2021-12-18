@@ -226,7 +226,6 @@ const deleteGrade = async (req, res, next) => {
             if (newGrade) {
                 res.json({
                     isSuccess: true,
-                    // newGrade: newGrade,
                     message: "Success"
                 })
             } else {

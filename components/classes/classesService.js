@@ -29,7 +29,7 @@ module.exports = {
         const a = await allClass.exec()
         return a;
     },
-    
+
     async getClassById(id) {
 
         const cls = Classes.findOne({ _id: id })
@@ -254,7 +254,7 @@ module.exports = {
         if (isGradeExist.length == 0) {
             return null;
         } else {
-            const newGrade = {_id: new SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
+            const newGrade = { _id: new SchemaTypes.ObjectId, name: info.name, grade: parseInt(info.grade) }
 
             GradeStructure.findOneAndUpdate(
                 { classID: info.classID },
@@ -269,6 +269,27 @@ module.exports = {
                     }
                 },
                 { safe: true, new: true }).exec()
+            const gradeBoardExist = Grade.find({ classID: info.classID })
+            const isGradeBoardExist = await gradeBoardExist.exec()
+            if (isGradeBoardExist.length !== 0) {
+                const students = isGradeBoardExist[0].students;
+                for (var i =0; i < students.length; i++){
+                    students[i].grade.push({
+                        _id: newGrade._id,
+                        name: info.name,
+                        grade: 0,
+                    })
+                }
+                const newGradeBoard = Grade.findOneAndUpdate(
+                    { classID: info.classID },
+                    {
+                        $set: {
+                            students: students
+                        }
+                    },
+                    { safe: true, new: true }).exec()
+            }
+
             return {
                 _id: newGrade._id,
                 name: info.name,
@@ -276,37 +297,6 @@ module.exports = {
             };
         }
     },
-
-    async deleteGrade(info) {
-        info = info || {};
-        info.name = info.name || "";
-        info.grade = info.grade || "";
-        info.classID = info.classID || "";
-        const gradeExist = GradeStructure.find({ classID: info.classID })
-        const isGradeExist = await gradeExist.exec()
-        if (isGradeExist.length == 0) {
-            return null;
-        } else {
-            const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
-
-            GradeStructure.findOneAndUpdate(
-                { classID: info.classID },
-                {
-                    $push: {
-                        gradeList:
-                        {
-                            _id: new SchemaTypes.ObjectId,
-                            name: info.name,
-                            grade: parseInt(info.grade)
-                        }
-                    }
-                },
-                { safe: true, new: true }).exec()
-            return {
-                _id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)
-            };
-        }
-    },    
 
     async arrangeGrade(info) {
         info = info || {};
@@ -342,11 +332,32 @@ module.exports = {
         } else {
             // const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
             let gradeList = isGradeExist[0].gradeList;
-            for (var i = 0; i< gradeList.length; i++) {
-                if (gradeList[i]._id==info.gradeID){
-                    gradeList.splice(i,1) 
+            for (var i = 0; i < gradeList.length; i++) {
+                if (gradeList[i]._id == info.gradeID) {
+                    gradeList.splice(i, 1)
                 }
             }
+            const gradeBoardExist = Grade.find({ classID: info.classID })
+            const isGradeBoardExist = await gradeBoardExist.exec()
+            if (isGradeBoardExist.length !== 0) {
+                const students = isGradeBoardExist[0].students;
+                for (var i =0; i < students.length; i++){
+                    for(var j = 0; j<students[i].grade.length; j++){
+                        if(students[i].grade[j]._id == info.gradeID){
+                            students[i].grade.splice(j,1)
+                        }
+                    }
+                }
+                const newGradeBoard = Grade.findOneAndUpdate(
+                    { classID: info.classID },
+                    {
+                        $set: {
+                            students: students
+                        }
+                    },
+                    { safe: true, new: true }).exec()
+            }
+
             GradeStructure.findOneAndUpdate(
                 { classID: info.classID },
                 {
@@ -372,8 +383,8 @@ module.exports = {
         } else {
             // const newGrade = {_id: SchemaTypes.ObjectId,name: info.name,grade: parseInt(info.grade)}
             let gradeList = isGradeExist[0].gradeList;
-            for (var i = 0; i< gradeList.length; i++) {
-                if (gradeList[i]._id==info.gradeID){
+            for (var i = 0; i < gradeList.length; i++) {
+                if (gradeList[i]._id == info.gradeID) {
                     gradeList[i].name = info.name;
                     gradeList[i].grade = parseInt(info.grade);
                 }
@@ -386,6 +397,25 @@ module.exports = {
                     }
                 },
                 { safe: true, new: true }).exec()
+            
+            const gradeBoardExist = Grade.find({ classID: info.classID })
+            const isGradeBoardExist = await gradeBoardExist.exec()
+            if (isGradeBoardExist.length !== 0) {
+                const students = isGradeBoardExist[0].students;
+                for (var i =0; i < students.length; i++){
+                    students[i].grade = gradeList;
+                    for (var j = 0; j<students[i].grade.length;j++)
+                        students[i].grade[j].grade = 0;
+                }
+                const newGradeBoard = Grade.findOneAndUpdate(
+                    { classID: info.classID },
+                    {
+                        $set: {
+                            students: students
+                        }
+                    },
+                    { safe: true, new: true }).exec()
+            }
             return true;
         }
     },
