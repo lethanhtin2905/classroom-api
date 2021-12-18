@@ -29,6 +29,7 @@ module.exports = {
         const a = await allClass.exec()
         return a;
     },
+    
     async getClassById(id) {
 
         const cls = Classes.findOne({ _id: id })
@@ -270,8 +271,8 @@ module.exports = {
                 { safe: true, new: true }).exec()
             return {
                 _id: newGrade._id,
-                            name: info.name,
-                            grade: parseInt(info.grade)
+                name: info.name,
+                grade: parseInt(info.grade)
             };
         }
     },
@@ -389,14 +390,40 @@ module.exports = {
         }
     },
 
-    async addGradeBoard(info) {
+    async getGradeOfStudents(id) {
+        let listGrade = [];
+        let grade = [];
+        const gradeBoard = Grade.find({ classID: id })
+        const isGradeBoard = await gradeBoard.exec()
+        if (isGradeBoard[0].students === []) {
+            listGrade = []
+        } else {
+            grade = isGradeBoard[0].students;
+            for (var i = 0; i < grade.length; i++) {
+                console.log(grade[i])
+                listGrade = listGrade.concat(grade[i]);
+            }
+        }
+
+        return listGrade;
+    },
+
+    async updateGradeBoard(info) {
         info = info || {};
         info.data = info.data || {};
         info.classID = info.classID || "";
         const gradeBoardExist = Grade.find({ classID: info.classID })
         const isGradeBoardExist = await gradeBoardExist.exec()
         if (isGradeBoardExist.length !== 0) {
-            return null;
+            const newGradeBoard = Grade.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $set: {
+                        students: info.data
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return newGradeBoard;
         } else {
             const newGradeBoard = new Grade({
                 classID: info.classID,
@@ -410,6 +437,7 @@ module.exports = {
                 students: newGradeBoard.students
             };
         }
-        
+
+        return null;
     },
 }

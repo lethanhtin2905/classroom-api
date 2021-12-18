@@ -24,7 +24,7 @@ router.post('/:id/grade-structure/arrange', passport.authenticate('jwt', { sessi
 
 router.get('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.getGradeBoard);
 
-router.post('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.addGradeBoard);
+router.put('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.updateGradeBoard);
 
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 

@@ -281,10 +281,19 @@ const updateGrade = async (req, res, next) => {
 }
 
 const getGradeBoard = async (req, res, next) => {
-
+    let gradeOfStudents = await Class.getGradeOfStudents(req.params.id);
+    const result = gradeOfStudents.map((grade, index) => {
+        return {
+            name: grade.name,
+            studentId:grade.studentId,
+            grade: grade.grade,
+        }
+    })
+    console.log(result)
+    res.json(result);
 }
 
-const addGradeBoard = async (req, res, next) => {
+const updateGradeBoard = async (req, res, next) => {
     try {
         if (!req.body) {
             res.json({
@@ -292,7 +301,7 @@ const addGradeBoard = async (req, res, next) => {
                 message: "Fail"
             })
         } else {
-            const newGradeBoard = await Class.addGradeBoard({
+            const newGradeBoard = await Class.updateGradeBoard({
                 classID: req.params.id,
                 data: req.body.data,
             });
@@ -331,5 +340,5 @@ module.exports = {
     deleteGrade,
     updateGrade,
     getGradeBoard,
-    addGradeBoard
+    updateGradeBoard
 }
