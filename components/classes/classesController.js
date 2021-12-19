@@ -288,7 +288,6 @@ const getGradeBoard = async (req, res, next) => {
             grade: grade.grade,
         }
     })
-    console.log(result)
     res.json(result);
 }
 

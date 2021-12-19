@@ -425,12 +425,12 @@ module.exports = {
         let grade = [];
         const gradeBoard = Grade.find({ classID: id })
         const isGradeBoard = await gradeBoard.exec()
+        if (!isGradeBoard) return [];
         if (isGradeBoard[0].students === []) {
             listGrade = []
         } else {
             grade = isGradeBoard[0].students;
             for (var i = 0; i < grade.length; i++) {
-                console.log(grade[i])
                 listGrade = listGrade.concat(grade[i]);
             }
         }
