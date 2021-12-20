@@ -6,6 +6,7 @@ const Users = mongoose.model('Users')
 const GradeStructure = mongoose.model('GradeStructure')
 const Grade = mongoose.model('Grade')
 const nodemailer = require('nodemailer');
+const { editGradeOfStudent } = require('./classesController');
 
 // Configure nodemailer
 var transporter = nodemailer.createTransport({
@@ -273,7 +274,7 @@ module.exports = {
             const isGradeBoardExist = await gradeBoardExist.exec()
             if (isGradeBoardExist.length !== 0) {
                 const students = isGradeBoardExist[0].students;
-                for (var i =0; i < students.length; i++){
+                for (var i = 0; i < students.length; i++) {
                     students[i].grade.push({
                         _id: newGrade._id,
                         name: info.name,
@@ -341,10 +342,10 @@ module.exports = {
             const isGradeBoardExist = await gradeBoardExist.exec()
             if (isGradeBoardExist.length !== 0) {
                 const students = isGradeBoardExist[0].students;
-                for (var i =0; i < students.length; i++){
-                    for(var j = 0; j<students[i].grade.length; j++){
-                        if(students[i].grade[j]._id == info.gradeID){
-                            students[i].grade.splice(j,1)
+                for (var i = 0; i < students.length; i++) {
+                    for (var j = 0; j < students[i].grade.length; j++) {
+                        if (students[i].grade[j]._id == info.gradeID) {
+                            students[i].grade.splice(j, 1)
                         }
                     }
                 }
@@ -397,14 +398,14 @@ module.exports = {
                     }
                 },
                 { safe: true, new: true }).exec()
-            
+
             const gradeBoardExist = Grade.find({ classID: info.classID })
             const isGradeBoardExist = await gradeBoardExist.exec()
             if (isGradeBoardExist.length !== 0) {
                 const students = isGradeBoardExist[0].students;
-                for (var i =0; i < students.length; i++){
+                for (var i = 0; i < students.length; i++) {
                     students[i].grade = gradeList;
-                    for (var j = 0; j<students[i].grade.length;j++)
+                    for (var j = 0; j < students[i].grade.length; j++)
                         students[i].grade[j].grade = 0;
                 }
                 const newGradeBoard = Grade.findOneAndUpdate(
@@ -425,16 +426,18 @@ module.exports = {
         let grade = [];
         const gradeBoard = Grade.find({ classID: id })
         const isGradeBoard = await gradeBoard.exec()
-        if (!isGradeBoard) return [];
-        if (isGradeBoard[0].students === []) {
-            listGrade = []
+        if (isGradeBoard[0] === undefined) {
+            listGrade = [];
         } else {
-            grade = isGradeBoard[0].students;
-            for (var i = 0; i < grade.length; i++) {
-                listGrade = listGrade.concat(grade[i]);
+            if (isGradeBoard[0].students === []) {
+                listGrade = []
+            } else {
+                grade = isGradeBoard[0].students;
+                for (var i = 0; i < grade.length; i++) {
+                    listGrade = listGrade.concat(grade[i]);
+                }
             }
         }
-
         return listGrade;
     },
 
@@ -469,5 +472,41 @@ module.exports = {
         }
 
         return null;
+    },
+
+    async editGradeForStudent(info) {
+        info = info || {};
+        info.data = info.data || {};
+        info.classID = info.classID || "";
+        const gradeBoardExist = Grade.find({ classID: info.classID })
+        const isGradeBoardExist = await gradeBoardExist.exec()
+        if (isGradeBoardExist.length !== 0) {
+            const listStudent = isGradeBoardExist[0].students;
+            
+            for (var i =0 ; i < listStudent.length; i++){
+                if(listStudent[i].studentId == info.data.studentId){
+                    const student = listStudent[i];
+                    for (var j =0; j < student.grade.length ; i++) {
+                        if(student.grade[i]._id == info.data.gradeId) {
+                            student.grade[i].grade = parseInt(info.data.value);
+                            break;
+                        }
+                    }
+                    listStudent[i] = student;
+                    break;
+                }
+            }
+            const newGradeBoard = Grade.findOneAndUpdate(
+                { classID: info.classID },
+                {
+                    $set: {
+                        students: listStudent,
+                    }
+                },
+                { safe: true, new: true }).exec()
+            return newGradeBoard;
+        } else {
+            return null;
+        }
     },
 }

@@ -56,7 +56,6 @@ const getClass = async (req, res, next) => {
         desc: cls.desc,
         userList: cls.userList
     }
-    console.log(result);
     res.json(result);
 };
 
@@ -325,6 +324,40 @@ const updateGradeBoard = async (req, res, next) => {
     }
 }
 
+const editGradeOfStudent = async (req, res, next) => {
+    try {
+        if (!req.body) {
+            res.json({
+                isSuccess: false,
+                message: "Fail"
+            })
+        } else {
+            const newGradeBoard = await Class.editGradeForStudent({
+                classID: req.params.id,
+                data: req.body,
+            });
+            if (newGradeBoard) {
+                res.json({
+                    isSuccess: true,
+                    newGradeBoard: newGradeBoard,
+                    message: "Success"
+                })
+            } else {
+                res.json({
+                    isSuccess: false,
+                    message: "Fail1"
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            isSuccess: false,
+            message: "Fail2"
+        })
+    }
+}
+
 module.exports = {
     allClasses,
     myClasses,
@@ -338,5 +371,6 @@ module.exports = {
     deleteGrade,
     updateGrade,
     getGradeBoard,
-    updateGradeBoard
+    updateGradeBoard,
+    editGradeOfStudent
 }

@@ -26,6 +26,8 @@ router.get('/:id/grade', passport.authenticate('jwt', { session: false }), class
 
 router.put('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.updateGradeBoard);
 
+router.put('/:id/grade/edit', passport.authenticate('jwt', { session: false }), classesController.editGradeOfStudent);
+
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 
 module.exports = router;
