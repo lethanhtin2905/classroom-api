@@ -487,8 +487,8 @@ module.exports = {
                 if(listStudent[i].studentId == info.data.studentId){
                     const student = listStudent[i];
                     for (var j =0; j < student.grade.length ; i++) {
-                        if(student.grade[i]._id == info.data.gradeId) {
-                            student.grade[i].grade = parseInt(info.data.value);
+                        if(student.grade[j]._id == info.data.gradeId) {
+                            student.grade[j].grade = parseInt(info.data.value);
                             break;
                         }
                     }
