@@ -331,13 +331,10 @@ const editGradeForStudent = async (req, res, next) => {
                 message: "Fail"
             })
         } else {
-            console.log('oke')
-            console.log(req.body)
             const newGradeBoard = await Class.editGradeForStudent({
                 classID: req.params.id,
                 data: req.body,
             });
-            console.log(newGradeBoard)
             if (newGradeBoard) {
                 res.json({
                     isSuccess: true,

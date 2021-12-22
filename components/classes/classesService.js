@@ -477,22 +477,17 @@ module.exports = {
         info = info || {};
         info.data = info.data || {};
         info.classID = info.classID || "";
-        console.log(info)
         const gradeBoardExist = Grade.find({ classID: info.classID })
         const isGradeBoardExist = await gradeBoardExist.exec()
         if (isGradeBoardExist.length !== 0) {
-            console.log('co')
             const listStudent = isGradeBoardExist[0].students;
             for (var i =0 ; i < listStudent.length; i++){
                 if(listStudent[i].studentId == info.data.studentId){
-                    console.log('co')
                     const student = listStudent[i];
                     for (var j =0; j < student.grade.length ; j++) {
                         if(student.grade[j]._id == info.data.gradeId) {
-                            console.log('co')
                             student.grade[j].grade = parseInt(info.data.value);
                         } else {
-                            console.log('k co')
                         }
                     }
                     listStudent[i] = student;
@@ -508,7 +503,6 @@ module.exports = {
                 { safe: true, new: true }).exec()
             return newGradeBoard;
         } else {
-            console.log("k co")
             return null;
         }
     },
