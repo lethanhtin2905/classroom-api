@@ -1,5 +1,4 @@
 const Class = require('./classesService');
-const mongoose = require('mongoose');
 const constant = require('../../Utils/constant');
 
 /* GET all classes. */
@@ -324,7 +323,7 @@ const updateGradeBoard = async (req, res, next) => {
     }
 }
 
-const editGradeOfStudent = async (req, res, next) => {
+const editGradeForStudent = async (req, res, next) => {
     try {
         if (!req.body) {
             res.json({
@@ -332,10 +331,13 @@ const editGradeOfStudent = async (req, res, next) => {
                 message: "Fail"
             })
         } else {
+            console.log('oke')
+            console.log(req.body)
             const newGradeBoard = await Class.editGradeForStudent({
                 classID: req.params.id,
                 data: req.body,
             });
+            console.log(newGradeBoard)
             if (newGradeBoard) {
                 res.json({
                     isSuccess: true,
@@ -371,6 +373,6 @@ module.exports = {
     deleteGrade,
     updateGrade,
     getGradeBoard,
-    updateGradeBoard,
-    editGradeOfStudent
+    editGradeForStudent,
+    updateGradeBoard
 }

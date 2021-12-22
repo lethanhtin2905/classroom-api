@@ -12,6 +12,12 @@ router.get('/:id/users', passport.authenticate('jwt', { session: false }), class
 
 router.post('/:id/invited', passport.authenticate('jwt', { session: false }), classesController.invitedUser);
 
+router.get('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.getGradeBoard);
+
+router.put('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.updateGradeBoard);
+
+router.put('/:id/grade/edit', passport.authenticate('jwt', { session: false }), classesController.editGradeForStudent);
+
 router.get('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.getGradeStructure);
 
 router.post('/:id/grade-structure', passport.authenticate('jwt', { session: false }), classesController.addGrade);
@@ -22,11 +28,6 @@ router.put('/:id/grade-structure/:idGrade', passport.authenticate('jwt', { sessi
 
 router.post('/:id/grade-structure/arrange', passport.authenticate('jwt', { session: false }), classesController.arrangeGrade);
 
-router.get('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.getGradeBoard);
-
-router.put('/:id/grade', passport.authenticate('jwt', { session: false }), classesController.updateGradeBoard);
-
-router.put('/:id/grade/edit', passport.authenticate('jwt', { session: false }), classesController.editGradeOfStudent);
 
 router.post('/', passport.authenticate('jwt', { session: false }), classesController.addClass);
 
