@@ -1,23 +1,24 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const SchemaTypes = mongoose.Types;
 const constant = require('../../Utils/constant');
 const Classes = mongoose.model('Classes');
-const Users = mongoose.model('Users')
+const Users = mongoose.model('Users');
 const GradeStructure = mongoose.model('GradeStructure')
-const Grade = mongoose.model('Grade')
+const Grade = mongoose.model('Grade');
 const nodemailer = require('nodemailer');
 
 // Configure nodemailer
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: "gradebook18120595@gmail.com",
-        pass: "18120595"
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASSWORD
     }
 });
 
 var mailOptions = {
-    from: "gradebook18120595@gmail.com"
+    from: process.env.MAIL_USER
 };
 
 module.exports = {
@@ -207,8 +208,6 @@ module.exports = {
                     },
                     { safe: true, new: true }).exec()
             }
-
-
         }
 
         mailOptions.to = email;
@@ -216,7 +215,10 @@ module.exports = {
         mailOptions.text = 'Người dùng ' + currentUser.name + ' (' + currentUser.email + ') đã mời bạn tham gia một lớp học. ' +
             'Vui lòng sử dụng email ' + email + ' để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: ' +
             'http://localhost:3000/' + currentClass
-
+        mailOptions.html =  `<div> <p>Người dùng ${currentUser.name} (${currentUser.email}) đã mời bạn tham gia lớp học</p>
+                                    <p>Vui lòng sử dụng email ${email} để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: </p> \
+                                    <p><a href= '${process.env.BASE_URL}${currentClass}'> '${process.env.BASE_URL}${currentClass}' </a></p>
+                            </div>`
         // Send email
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {

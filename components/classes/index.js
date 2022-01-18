@@ -5,6 +5,8 @@ const classesController = require('./classesController');
 
 /* GET all Classes. */
 router.get('/', passport.authenticate('jwt', { session: false }), classesController.myClasses);
+//router.get('/', classesController.myClasses);
+
 
 router.get('/:id', passport.authenticate('jwt', { session: false }), classesController.getClass);
 
