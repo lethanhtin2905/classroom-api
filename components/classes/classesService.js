@@ -214,7 +214,7 @@ module.exports = {
         mailOptions.subject = 'BẠN ĐƯỢC MỜI THAM GIA MỘT LỚP HỌC';
         mailOptions.text = 'Người dùng ' + currentUser.name + ' (' + currentUser.email + ') đã mời bạn tham gia một lớp học. ' +
             'Vui lòng sử dụng email ' + email + ' để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: ' +
-            'http://localhost:3000/' + currentClass
+            'https://18120595-webnc.surge.sh/' + currentClass
         mailOptions.html =  `<div> <p>Người dùng ${currentUser.name} (${currentUser.email}) đã mời bạn tham gia lớp học</p>
                                     <p>Vui lòng sử dụng email ${email} để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: </p> \
                                     <p><a href= '${process.env.BASE_URL}${currentClass}'> '${process.env.BASE_URL}${currentClass}' </a></p>

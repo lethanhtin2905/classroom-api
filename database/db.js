@@ -2,7 +2,7 @@ let mongoose = require('mongoose');
 const readLine = require('readline');
 
 const db_url = 'mongodb+srv://admin:admin@product-hkdj8.mongodb.net/classroom?retryWrites=true&w=majority';
-//const mongodb_url = 'mongodb://localhost:27017/test';
+//const mongodb_url = 'mongodb://localhost:27017/classroom';
 
 const connect = () => {
   setTimeout(() => mongoose.connect(db_url, {useNewUrlParser: true, useUnifiedTopology: true}), 1000);
