@@ -12,13 +12,16 @@ const nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD
+        // user: process.env.MAIL_USER,
+        // pass: process.env.MAIL_PASSWORD
+        user: "gradebook18120595@gmail.com",
+        password: "18120595"
     }
 });
 
 var mailOptions = {
-    from: process.env.MAIL_USER
+    // from: process.env.MAIL_USER
+    from: "gradebook18120595@gmail.com"
 };
 
 module.exports = {
@@ -217,7 +220,7 @@ module.exports = {
             'https://18120595-webnc.surge.sh/' + currentClass
         mailOptions.html =  `<div> <p>Người dùng ${currentUser.name} (${currentUser.email}) đã mời bạn tham gia lớp học</p>
                                     <p>Vui lòng sử dụng email ${email} để đăng nhập vào hệ thống Grade Book và truy cập lớp học tại link sau: </p> \
-                                    <p><a href= '${process.env.BASE_URL}${currentClass}'> '${process.env.BASE_URL}${currentClass}' </a></p>
+                                    <p><a href= 'https://18120595-webnc.surge.sh/${currentClass}'> 'https://18120595-webnc.surge.sh/${currentClass}' </a></p>
                             </div>`
         // Send email
         transporter.sendMail(mailOptions, function (error, info) {
