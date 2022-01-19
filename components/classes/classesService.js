@@ -15,7 +15,7 @@ var transporter = nodemailer.createTransport({
         // user: process.env.MAIL_USER,
         // pass: process.env.MAIL_PASSWORD
         user: "gradebook18120595@gmail.com",
-        password: "18120595"
+        pass: "18120595"
     }
 });
 
