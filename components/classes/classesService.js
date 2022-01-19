@@ -224,7 +224,7 @@ module.exports = {
             if (error) {
                 console.log(error);
             } else {
-                console.log('Email sent: ');
+                console.log('Email sent: success!!!');
             }
         });
     },
